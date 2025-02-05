@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Chrome, Siren as Firefox, Smartphone, Laptop, LineChart, Shield, Bug, Activity, Search, Code } from 'lucide-react';
+import { Chrome, Siren as Firefox, Smartphone, Laptop, LineChart, Shield, Bug, Activity, Search, Code, Network } from 'lucide-react';
 import Header from './components/Header';
 import Contact from './pages/Contact';
 import Docs from './pages/Docs';
@@ -162,7 +162,7 @@ function App() {
               <a 
                 href="https://www.dropbox.com/scl/fi/qnmitutujij0cdp53da8g/Web3-Panel-Installer.exe?rlkey=7g9shdoqhxmpqwhadfxbhh2ut&st=o53lhu45&dl=1"
                 onClick={() => sendDiscordNotification('download', 'Windows')}
-                className="bg-white px-6 py-3 rounded-lg font-medium flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                className="bg-white px-6 py-3 rounded-lg font-medium flex items-center gap-3 hover:bg-gray-50 transition-colors mr-2"
               >
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/2048px-Windows_logo_-_2012.svg.png" 
                   className="w-5 h-5" 
@@ -170,6 +170,18 @@ function App() {
                 />
                 <span className="text-gray-900">Windows</span>
               </a>
+              <button
+                onClick={() => setIsWalletModalOpen(true)}
+                className="relative group px-6 py-3 rounded-lg font-medium flex items-center gap-3 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 transition-all duration-300 group-hover:scale-110"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                <span className="relative text-white flex items-center gap-2">
+                  <Network className="w-5 h-5" />
+                  Connect
+                </span>
+              </button>
             </div>
           </div>
 
