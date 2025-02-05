@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Chrome, Siren as Firefox, Smartphone, Laptop, LineChart, Shield, Bug, Activity, Search, Code, Network } from 'lucide-react';
 import Header from './components/Header';
+import WalletModal from './components/WalletModal';
 import Contact from './pages/Contact';
 import Docs from './pages/Docs';
 import { useEffect, useState } from 'react';
@@ -38,6 +39,7 @@ const errorMessages = [
 function App() {
   const [transactionData, setTransactionData] = useState(generateTransactionData());
   const [gasData, setGasData] = useState(generateGasData());
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [errorData, setErrorData] = useState({
     contract: generateContractAddress(),
     time: '1 min ago',
@@ -89,6 +91,10 @@ function App() {
       } : {}}
     >
       <Header />
+      <WalletModal 
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+      />
       <Routes>
         <Route path="/contact" element={<Contact />} />
         <Route path="/docs" element={<Docs />} />
